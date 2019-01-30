@@ -3,6 +3,7 @@ package com.example.demo.customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.internal.CustomizerRegistry;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,19 +14,20 @@ public class CustomerController {
     @Autowired
     CustomerRepository customerRepository;
 
+
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public CustomerController(CustomerRepository customerRepository, BCryptPasswordEncoder bCryptPasswordEncoder){
+        this.customerRepository = customerRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public HttpStatus addCustomer(@RequestBody CustomerEntity customerEntity) {
             customerEntity.setRole("user");
-            System.out.println(customerEntity.getId());
+            customerEntity.setPassword(bCryptPasswordEncoder.encode(customerEntity.getPassword()));
             customerRepository.save(customerEntity);
         return HttpStatus.CREATED;
-    }
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public HttpStatus loginCustomer(@RequestBody CustomerEntity customerEntity) {
-            customerEntity.setRole("user");
-            System.out.println(customerEntity.getId());
-            customerRepository.save(customerEntity);
-        return HttpStatus.OK;
     }
 
 }
