@@ -29,6 +29,12 @@ public class BorrowController {
         return HttpStatus.CREATED;
     }
 
+    @RequestMapping(value = "/list",method = RequestMethod.POST)
+    public List<BorrowEntity> listAllBorrows(){
+        return borrowRepository.findAll();
+    }
+
+
     @RequestMapping(value = "/return/{id}",method = RequestMethod.GET)
     public HttpStatus returnBorrow(@PathVariable Integer id){
         borrowRepository.changeAsReturned(id,"oddano",new Timestamp(System.currentTimeMillis()));

@@ -17,5 +17,5 @@ public interface BorrowRepository  extends JpaRepository<BorrowEntity,Long> {
     @Query("UPDATE BorrowEntity SET status = ?2, date_of_return = ?3 WHERE id = ?1")
     int changeAsReturned(Integer id, String status, Date returnDate);
 
-
+    List<BorrowEntity> findAll();
 }
