@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(value = "/book")
@@ -28,6 +30,12 @@ public class BookController {
         }
         authBookService.createRelation(bookContentHolder.getBookEntity(),bookContentHolder.getAuthorEntityList());
         return HttpStatus.CREATED;
+    }
+
+    @RequestMapping(value ="/all", method = RequestMethod.POST)
+    public List<BookEntity> listBooks(){
+
+        return bookRepository.findAll();
     }
 
     @RequestMapping(value = "/remove/{id}",method = RequestMethod.GET)
