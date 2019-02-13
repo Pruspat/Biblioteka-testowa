@@ -24,6 +24,12 @@ public class BookController {
     @RequestMapping(value = "/add" , method = RequestMethod.POST)
     public HttpStatus addBook(@RequestBody BookContentHolder bookContentHolder) {
 
+        System.out.println(bookContentHolder.getBookEntity().getTitle());
+        for (AuthorEntity authorEntity : bookContentHolder.getAuthorEntityList()) {
+           System.out.println(authorEntity.getName());
+        }
+
+
        bookRepository.save(bookContentHolder.getBookEntity());
         for (AuthorEntity authorEntity : bookContentHolder.getAuthorEntityList()) {
             authorRepository.save(authorEntity);

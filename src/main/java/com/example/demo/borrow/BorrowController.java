@@ -1,7 +1,10 @@
 package com.example.demo.borrow;
 
+import com.example.demo.customer.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Time;
@@ -16,10 +19,8 @@ public class BorrowController {
     @Autowired
     BorrowRepository borrowRepository;
 
-    @RequestMapping(value = "/list/{customerId}")
-    public List<BorrowEntity> findBorrowsForUser(@PathVariable Integer customerId){
-        return borrowRepository.findAllByCustomerId(customerId);
-    }
+    @Autowired
+    CustomerRepository customerRepository;
 
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     public HttpStatus addBorrow(@RequestBody BorrowEntity borrowEntity){
@@ -31,7 +32,11 @@ public class BorrowController {
 
     @RequestMapping(value = "/list",method = RequestMethod.POST)
     public List<BorrowEntity> listAllBorrows(){
-        return borrowRepository.findAll();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUser = authentication.getName();
+        System.out.println("Aktualny uzytkownik: "+currentUser);
+
+        return borrowRepository.findAllByCustomerId(customerRepository.findByEmail(currentUser).getId());
     }
 
 
