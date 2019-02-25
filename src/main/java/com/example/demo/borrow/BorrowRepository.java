@@ -18,4 +18,6 @@ public interface BorrowRepository  extends JpaRepository<BorrowEntity,Long> {
     int changeAsReturned(Integer id, String status, Date returnDate);
 
     List<BorrowEntity> findAll();
+
+    BorrowEntity findById(Integer id);
 }

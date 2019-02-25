@@ -14,6 +14,7 @@ public class BookEntity {
     private String type;
     private Long isbnNr;
     private Integer workerId;
+    private Boolean isBorrowed;
 
 
     public Integer getId() {
@@ -54,5 +55,13 @@ public class BookEntity {
 
     public void setWorkerId(Integer workerId) {
         this.workerId = workerId;
+    }
+
+    public Boolean getBorrowed() {
+        return isBorrowed;
+    }
+
+    public void setBorrowed(Boolean borrowed) {
+        isBorrowed = borrowed;
     }
 }
