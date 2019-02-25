@@ -31,10 +31,12 @@ public class BookController {
 
 
        bookRepository.save(bookContentHolder.getBookEntity());
+
         for (AuthorEntity authorEntity : bookContentHolder.getAuthorEntityList()) {
             authorRepository.save(authorEntity);
         }
         authBookService.createRelation(bookContentHolder.getBookEntity(),bookContentHolder.getAuthorEntityList());
+
         return HttpStatus.CREATED;
     }
 
