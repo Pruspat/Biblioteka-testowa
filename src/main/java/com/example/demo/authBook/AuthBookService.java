@@ -26,6 +26,11 @@ public class AuthBookService {
     }
 
     public void removeRelation(Integer bookId){
-        authBookRepository.removeByBookId(bookId);
+
+        List<AuthBookEntity> relations =  authBookRepository.findAllByBookId(bookId);
+        for (AuthBookEntity authBook: relations) {
+            authBookRepository.delete(authBook);
+        }
+
     }
 }

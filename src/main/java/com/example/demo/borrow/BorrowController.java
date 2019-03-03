@@ -1,5 +1,8 @@
 package com.example.demo.borrow;
 
+import com.example.demo.authBook.AuthBookEntity;
+import com.example.demo.authBook.AuthBookRepository;
+import com.example.demo.author.AuthorEntity;
 import com.example.demo.author.AuthorRepository;
 import com.example.demo.book.BookEntity;
 import com.example.demo.book.BookRepository;
@@ -33,11 +36,15 @@ public class BorrowController {
     @Autowired
     AuthorRepository authorRepository;
 
+    @Autowired
+    AuthBookRepository authBookRepository;
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public HttpStatus addBorrow(@RequestBody BorrowEntity borrowEntity) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUser = authentication.getName();
         Integer customerId = customerRepository.findByEmail(currentUser).getId();
+
 
         //Save borrow entity
         if (!bookRepository.findById(borrowEntity.getBookId()).getBorrowed()) {
@@ -46,6 +53,7 @@ public class BorrowController {
             Date date = new Date(new Timestamp(System.currentTimeMillis()).getTime());
             System.out.println(date);
             borrowEntity.setDateOfBorrow(date);
+            borrowEntity.setStatus("Nie oddano");
             borrowEntity.setStatus("Nie oddano");
             borrowRepository.save(borrowEntity);
 
@@ -67,12 +75,19 @@ public class BorrowController {
         System.out.println("Aktualny uzytkownik: " + currentUser);
         List<BorrowEntity> borrows = borrowRepository.findAllByCustomerId(customerRepository.findByEmail(currentUser).getId());
         List<Borrow> borrowList = new ArrayList<>();
+
+        List<AuthBookEntity> authBookEntitiesList = new ArrayList<>();
+        List<AuthorEntity> bookAuthors = new ArrayList<>();
         for (BorrowEntity borrow : borrows) {
 
+            authBookEntitiesList = authBookRepository.findAllByBookId(borrow.getBookId());
+
+            for (AuthBookEntity authBookEntity : authBookEntitiesList) {
+                bookAuthors.add(authorRepository.findById(authBookEntity.getAuthorId()));
+            }
 
             borrowList.add(new Borrow(
-                    "Imie autora",
-                    "Naziwsok autora",
+                    bookAuthors,
                     bookRepository.findById(borrow.getBookId()).getTitle(),
                     borrow.getDateOfBorrow(),
                     borrow.getDateOfReturn(),

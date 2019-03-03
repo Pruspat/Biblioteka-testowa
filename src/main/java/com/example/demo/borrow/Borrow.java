@@ -1,41 +1,32 @@
 package com.example.demo.borrow;
 
+import com.example.demo.author.AuthorEntity;
+
 import java.util.Date;
+import java.util.List;
 
 public class Borrow {
 
-    private String authorName;
-    private String authorSurname;
+    private List<AuthorEntity> authors;
     private String title;
     private Date dateOfBorrow;
     private Date dateOfReturn;
     private String status;
 
-
-    public Borrow(String authorName, String authorSurname, String title, Date dateOfBorrow, Date dateOfReturn, String status) {
-        this.authorName = authorName;
-        this.authorSurname = authorSurname;
+    public Borrow(List<AuthorEntity> authors, String title, Date dateOfBorrow, Date dateOfReturn, String status) {
+        this.authors = authors;
         this.title = title;
         this.dateOfBorrow = dateOfBorrow;
         this.dateOfReturn = dateOfReturn;
         this.status = status;
     }
 
-
-    public String getAuthorName() {
-        return authorName;
+    public List<AuthorEntity> getAuthors() {
+        return authors;
     }
 
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
-    }
-
-    public String getAuthorSurname() {
-        return authorSurname;
-    }
-
-    public void setAuthorSurname(String authorSurname) {
-        this.authorSurname = authorSurname;
+    public void setAuthors(List<AuthorEntity> authors) {
+        this.authors = authors;
     }
 
     public String getTitle() {

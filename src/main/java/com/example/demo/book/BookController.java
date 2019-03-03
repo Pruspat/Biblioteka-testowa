@@ -34,6 +34,8 @@ public class BookController {
            System.out.println(authorEntity.getName());
         }
 
+        bookContentHolder.getBookEntity().setBorrowed(false);
+
         bookRepository.save(bookContentHolder.getBookEntity());
 
         for (AuthorEntity authorEntity : bookContentHolder.getAuthorEntityList()) {
@@ -69,8 +71,10 @@ public class BookController {
 
     @RequestMapping(value = "/remove/{id}",method = RequestMethod.GET)
     public HttpStatus removeBook(@PathVariable Integer id){
-        bookRepository.deleteById(id);
+
+        bookRepository.delete(bookRepository.findById(id));
         authBookService.removeRelation(id);
+
         return HttpStatus.OK;
     }
 }
