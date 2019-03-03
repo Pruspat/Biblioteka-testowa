@@ -7,11 +7,13 @@ public class Book {
     private Long isbnNr;
     private String name;
     private String surname;
+    private Boolean isBorrowed;
 
-    public Book(String title, String type, Long isbnNr) {
+    public Book(String title, String type, Long isbnNr,Boolean isBorrowed) {
         this.title = title;
         this.type = type;
         this.isbnNr = isbnNr;
+        this.isBorrowed = isBorrowed;
 
     }
 
@@ -53,5 +55,13 @@ public class Book {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public Boolean getBorrowed() {
+        return isBorrowed;
+    }
+
+    public void setBorrowed(Boolean borrowed) {
+        isBorrowed = borrowed;
     }
 }

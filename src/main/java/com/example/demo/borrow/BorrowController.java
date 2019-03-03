@@ -1,5 +1,6 @@
 package com.example.demo.borrow;
 
+import com.example.demo.author.AuthorRepository;
 import com.example.demo.book.BookEntity;
 import com.example.demo.book.BookRepository;
 import com.example.demo.customer.CustomerRepository;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -27,20 +30,26 @@ public class BorrowController {
     @Autowired
     BookRepository bookRepository;
 
+    @Autowired
+    AuthorRepository authorRepository;
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public HttpStatus addBorrow(@RequestBody BorrowEntity borrowEntity) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUser = authentication.getName();
         Integer customerId = customerRepository.findByEmail(currentUser).getId();
 
-        //Zapis encji borrow
+        //Save borrow entity
         if (!bookRepository.findById(borrowEntity.getBookId()).getBorrowed()) {
             borrowEntity.setCustomerId(customerId);
-            borrowEntity.setDateOfBorrow(new Timestamp(System.currentTimeMillis()));
+
+            Date date = new Date(new Timestamp(System.currentTimeMillis()).getTime());
+            System.out.println(date);
+            borrowEntity.setDateOfBorrow(date);
             borrowEntity.setStatus("Nie oddano");
             borrowRepository.save(borrowEntity);
 
-            //ustawienie w bookEntity ze jest wypozyczona
+            //set is_borrowed equals false in bookEntity
             BookEntity book = bookRepository.findById(borrowEntity.getBookId());
             book.setBorrowed(true);
             bookRepository.save(book);
@@ -52,12 +61,26 @@ public class BorrowController {
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
-    public List<BorrowEntity> listAllBorrows() {
+    public List<Borrow> listAllBorrows() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUser = authentication.getName();
         System.out.println("Aktualny uzytkownik: " + currentUser);
+        List<BorrowEntity> borrows = borrowRepository.findAllByCustomerId(customerRepository.findByEmail(currentUser).getId());
+        List<Borrow> borrowList = new ArrayList<>();
+        for (BorrowEntity borrow : borrows) {
 
-        return borrowRepository.findAllByCustomerId(customerRepository.findByEmail(currentUser).getId());
+
+            borrowList.add(new Borrow(
+                    "Imie autora",
+                    "Naziwsok autora",
+                    bookRepository.findById(borrow.getBookId()).getTitle(),
+                    borrow.getDateOfBorrow(),
+                    borrow.getDateOfReturn(),
+                    borrow.getStatus())
+            );
+        }
+
+        return borrowList;
     }
 
 

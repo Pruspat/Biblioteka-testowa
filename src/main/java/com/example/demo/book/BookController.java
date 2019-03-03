@@ -1,5 +1,7 @@
 package com.example.demo.book;
 
+import com.example.demo.authBook.AuthBookEntity;
+import com.example.demo.authBook.AuthBookRepository;
 import com.example.demo.authBook.AuthBookService;
 import com.example.demo.author.AuthorEntity;
 import com.example.demo.author.AuthorRepository;
@@ -7,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,6 +23,8 @@ public class BookController {
     AuthorRepository authorRepository;
     @Autowired
     AuthBookService authBookService;
+    @Autowired
+    AuthBookRepository authBookRepository;
 
     @RequestMapping(value = "/add" , method = RequestMethod.POST)
     public HttpStatus addBook(@RequestBody BookContentHolder bookContentHolder) {
@@ -29,8 +34,7 @@ public class BookController {
            System.out.println(authorEntity.getName());
         }
 
-
-       bookRepository.save(bookContentHolder.getBookEntity());
+        bookRepository.save(bookContentHolder.getBookEntity());
 
         for (AuthorEntity authorEntity : bookContentHolder.getAuthorEntityList()) {
             authorRepository.save(authorEntity);
@@ -41,9 +45,26 @@ public class BookController {
     }
 
     @RequestMapping(value ="/all", method = RequestMethod.POST)
-    public List<BookEntity> listBooks(){
+    public List<BookContentHolder> listBooks(){
 
-        return bookRepository.findAll();
+        List<BookContentHolder> bookWithAuthorList = new ArrayList<>();
+        List<BookEntity> listOfBooks = bookRepository.findAll();
+        List<AuthBookEntity> authBookEntitiesList = new ArrayList<>();
+        List<AuthorEntity> bookAuthors = new ArrayList<>();
+        for (BookEntity book: listOfBooks) {
+
+            authBookEntitiesList = authBookRepository.findAllByBookId(book.getId());
+
+            for (AuthBookEntity authBookEntity : authBookEntitiesList) {
+                bookAuthors.add(authorRepository.findById(authBookEntity.getAuthorId()));
+            }
+
+            BookContentHolder bookContentHolder = new BookContentHolder(book, bookAuthors);
+            bookWithAuthorList.add(bookContentHolder);
+//            bookAuthors.clear();
+        }
+
+        return bookWithAuthorList;
     }
 
     @RequestMapping(value = "/remove/{id}",method = RequestMethod.GET)
