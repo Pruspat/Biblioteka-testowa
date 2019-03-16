@@ -9,6 +9,9 @@ public class BookContentHolder {
     private BookEntity bookEntity;
     private List<AuthorEntity> authorEntityList;
 
+    public BookContentHolder() {
+    }
+
     public BookContentHolder(BookEntity bookEntity, List<AuthorEntity> authorEntityList) {
         this.bookEntity = bookEntity;
         this.authorEntityList = authorEntityList;

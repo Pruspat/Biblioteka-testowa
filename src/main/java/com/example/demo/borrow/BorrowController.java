@@ -1,5 +1,8 @@
 package com.example.demo.borrow;
 
+import com.example.demo.CustomerBorrow.CustomerBorrowEntity;
+import com.example.demo.CustomerBorrow.CustomerBorrowRepository;
+import com.example.demo.CustomerBorrow.CustomerBorrowService;
 import com.example.demo.authBook.AuthBookEntity;
 import com.example.demo.authBook.AuthBookRepository;
 import com.example.demo.author.AuthorEntity;
@@ -39,33 +42,42 @@ public class BorrowController {
     @Autowired
     AuthBookRepository authBookRepository;
 
+    @Autowired
+    CustomerBorrowService customerBorrowService;
+
+    @Autowired
+    CustomerBorrowRepository customerBorrowRepository;
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public HttpStatus addBorrow(@RequestBody BorrowEntity borrowEntity) {
+    public HttpStatus addBorrow(@RequestBody Integer[] books) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUser = authentication.getName();
         Integer customerId = customerRepository.findByEmail(currentUser).getId();
 
+        List<BorrowEntity> borrowEntityList = new ArrayList<>();
+        for (Integer id : books) {
+            BorrowEntity borrowEntity = new BorrowEntity();
+            //Save borrow entity
+            if (!bookRepository.findById(id).getBorrowed()) {
+                borrowEntity.setCustomerId(customerId);
 
-        //Save borrow entity
-        if (!bookRepository.findById(borrowEntity.getBookId()).getBorrowed()) {
-            borrowEntity.setCustomerId(customerId);
+                Date date = new Date(new Timestamp(System.currentTimeMillis()).getTime());
+                borrowEntity.setBookId(id);
+                borrowEntity.setDateOfBorrow(date);
+                borrowEntity.setStatus("Nie oddano");
+                borrowEntityList.add(borrowRepository.save(borrowEntity));
 
-            Date date = new Date(new Timestamp(System.currentTimeMillis()).getTime());
-            System.out.println(date);
-            borrowEntity.setDateOfBorrow(date);
-            borrowEntity.setStatus("Nie oddano");
-            borrowEntity.setStatus("Nie oddano");
-            borrowRepository.save(borrowEntity);
-
-            //set is_borrowed equals false in bookEntity
-            BookEntity book = bookRepository.findById(borrowEntity.getBookId());
-            book.setBorrowed(true);
-            bookRepository.save(book);
-            return HttpStatus.CREATED;
-        }else{
-            return HttpStatus.ALREADY_REPORTED;
+                //set is_borrowed equals false in bookEntity
+                BookEntity book = bookRepository.findById(id);
+                book.setBorrowed(true);
+                bookRepository.save(book);
+            } else {
+                return HttpStatus.ALREADY_REPORTED;
+            }
         }
 
+        customerBorrowService.createRelation(customerId,borrowEntityList);
+        return HttpStatus.CREATED;
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
@@ -99,13 +111,19 @@ public class BorrowController {
     }
 
 
-    @RequestMapping(value = "/return/{id}", method = RequestMethod.GET)
-    public HttpStatus returnBorrow(@PathVariable Integer id) {
-        borrowRepository.changeAsReturned(id, "oddano", new Timestamp(System.currentTimeMillis()));
+    @RequestMapping(value = "/return/{customerId}", method = RequestMethod.GET)
+    public HttpStatus returnBorrow(@PathVariable Integer customerId) {
 
-        BookEntity book = bookRepository.findById(borrowRepository.findById(id).getBookId());
-        book.setBorrowed(false);
-        bookRepository.save(book);
+        List<CustomerBorrowEntity> customerBorrowEntities = customerBorrowRepository.findAllByCustomerId(customerId);
+
+        for (CustomerBorrowEntity customerBorrowEntity: customerBorrowEntities) {
+
+            borrowRepository.changeAsReturned(customerBorrowEntity.getBorrowId(), "oddano", new Timestamp(System.currentTimeMillis()));
+            BookEntity book = bookRepository.findById(borrowRepository.findById(customerBorrowEntity.getBorrowId()).getBookId());
+            book.setBorrowed(false);
+            bookRepository.save(book);
+        }
+
         return HttpStatus.OK;
     }
 }

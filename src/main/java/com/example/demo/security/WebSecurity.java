@@ -31,9 +31,18 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
 
         config.addAllowedOrigin("http://localhost:3000");
+        http.authorizeRequests()
+                .antMatchers(
+                        "/swagger-resources/**",
+                        "/swagger-ui.html",
+                        "/webjars/**" ,
+                        /*Probably not needed*/ "/swagger.json")
+                .permitAll();
 
         http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+                .antMatchers(HttpMethod.POST, SIGN_UP_URL,
+                        "/swagger-resources/**",
+                        "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))
