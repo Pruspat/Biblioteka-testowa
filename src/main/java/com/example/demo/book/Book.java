@@ -5,8 +5,6 @@ public class Book {
     private String title;
     private String type;
     private Long isbnNr;
-    private String name;
-    private String surname;
     private Boolean isBorrowed;
 
     public Book(String title, String type, Long isbnNr,Boolean isBorrowed) {
@@ -41,21 +39,6 @@ public class Book {
         this.isbnNr = isbnNr;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
 
     public Boolean getBorrowed() {
         return isBorrowed;

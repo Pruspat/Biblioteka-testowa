@@ -76,7 +76,7 @@ public class BorrowController {
             }
         }
 
-        customerBorrowService.createRelation(customerId,borrowEntityList);
+        customerBorrowService.createRelation(customerId, borrowEntityList);
         return HttpStatus.CREATED;
     }
 
@@ -85,26 +85,34 @@ public class BorrowController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUser = authentication.getName();
         System.out.println("Aktualny uzytkownik: " + currentUser);
-        List<BorrowEntity> borrows = borrowRepository.findAllByCustomerId(customerRepository.findByEmail(currentUser).getId());
+
         List<Borrow> borrowList = new ArrayList<>();
-
-        List<AuthBookEntity> authBookEntitiesList = new ArrayList<>();
+        List<AuthBookEntity> authBookEntitiesList;
         List<AuthorEntity> bookAuthors = new ArrayList<>();
-        for (BorrowEntity borrow : borrows) {
 
-            authBookEntitiesList = authBookRepository.findAllByBookId(borrow.getBookId());
+        try{
+            List<BorrowEntity> borrows = borrowRepository.findAllByCustomerId(customerRepository.findByEmail(currentUser).getId());
 
-            for (AuthBookEntity authBookEntity : authBookEntitiesList) {
-                bookAuthors.add(authorRepository.findById(authBookEntity.getAuthorId()));
+            for (BorrowEntity borrow : borrows) {
+
+                authBookEntitiesList = authBookRepository.findAllByBookId(borrow.getBookId());
+
+                for (AuthBookEntity authBookEntity : authBookEntitiesList) {
+                    bookAuthors.add(authorRepository.findById(authBookEntity.getAuthorId()));
+                }
+
+                borrowList.add(new Borrow(
+                        bookAuthors,
+                        bookRepository.findById(borrow.getBookId()).getTitle(),
+                        borrow.getDateOfBorrow(),
+                        borrow.getDateOfReturn(),
+                        borrow.getStatus())
+                );
+
+
             }
-
-            borrowList.add(new Borrow(
-                    bookAuthors,
-                    bookRepository.findById(borrow.getBookId()).getTitle(),
-                    borrow.getDateOfBorrow(),
-                    borrow.getDateOfReturn(),
-                    borrow.getStatus())
-            );
+        } catch (NullPointerException e) {
+            System.out.println(e + " w borrow/list");
         }
 
         return borrowList;
@@ -116,7 +124,7 @@ public class BorrowController {
 
         List<CustomerBorrowEntity> customerBorrowEntities = customerBorrowRepository.findAllByCustomerId(customerId);
 
-        for (CustomerBorrowEntity customerBorrowEntity: customerBorrowEntities) {
+        for (CustomerBorrowEntity customerBorrowEntity : customerBorrowEntities) {
 
             borrowRepository.changeAsReturned(customerBorrowEntity.getBorrowId(), "oddano", new Timestamp(System.currentTimeMillis()));
             BookEntity book = bookRepository.findById(borrowRepository.findById(customerBorrowEntity.getBorrowId()).getBookId());
