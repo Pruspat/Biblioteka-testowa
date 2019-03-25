@@ -16,7 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -133,5 +132,46 @@ public class BorrowController {
         }
 
         return HttpStatus.OK;
+    }
+
+    @RequestMapping(value = "/mark", method = RequestMethod.POST)
+    public Boolean markBorrow(@RequestBody Borrow borrow) {
+
+        BorrowEntity borrowEntity = borrowRepository.findById(borrow.getId());
+
+       if(borrowEntity.getStatus().equals("oddano") && borrowEntity.getMark() == null && borrow.getMark() <= 5 && 0 < borrow.getMark()){
+           borrowRepository.setMark(borrow.getId(),borrow.getMark());
+           return true;
+       }else {
+           return false;
+       }
+    }
+
+    @RequestMapping(value = "/review", method = RequestMethod.POST)
+    public Boolean reviewBorrow(@RequestBody Borrow borrow) {
+
+        BorrowEntity borrowEntity = borrowRepository.findById(borrow.getId());
+
+        if(borrowEntity.getStatus().equals("oddano") && borrowEntity.getReview() == null){
+            borrowRepository.setReview(borrow.getId(),borrow.getReview());
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    @RequestMapping(value = "/avg-book/{bookId}", method = RequestMethod.GET)
+    public Double getAvgMark(@PathVariable Integer bookId) {
+
+        List<BorrowEntity> borrowEntityList = borrowRepository.findAllByBookId(bookId);
+        Double sum = 0.0;
+        Double counter = 0.0;
+
+        for (BorrowEntity borrowEntity : borrowEntityList) {
+           sum += borrowEntity.getMark();
+           counter++;
+        }
+
+      return sum/counter;
     }
 }

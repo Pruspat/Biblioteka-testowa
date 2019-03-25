@@ -16,6 +16,16 @@ public class BookEntity {
     private Integer workerId;
     private Boolean isBorrowed;
 
+    public BookEntity() {
+    }
+
+    public BookEntity(String title, String type, Long isbnNr, Integer workerId, Boolean isBorrowed) {
+        this.title = title;
+        this.type = type;
+        this.isbnNr = isbnNr;
+        this.workerId = workerId;
+        this.isBorrowed = isBorrowed;
+    }
 
     public Integer getId() {
         return id;

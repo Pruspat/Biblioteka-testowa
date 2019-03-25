@@ -8,5 +8,7 @@ public interface BookRepository extends JpaRepository<BookEntity,Long> {
 
     List<BookEntity> findAll();
 
+    List<BookEntity> findAllByType(String type);
+
     BookEntity findById(Integer id);
 }

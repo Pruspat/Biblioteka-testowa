@@ -19,6 +19,8 @@ public class BorrowEntity {
     private Date dateOfBorrow;
     private Date dateOfReturn;
     private String status;
+    private Integer mark;
+    private String review;
 //    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,mappedBy = "bookId",targetEntity = BookEntity.class)
 //    private List<BookEntity> booksList = new ArrayList<>();
 
@@ -77,5 +79,21 @@ public class BorrowEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Integer getMark() {
+        return mark;
+    }
+
+    public void setMark(Integer mark) {
+        this.mark = mark;
+    }
+
+    public String getReview() {
+        return review;
+    }
+
+    public void setReview(String review) {
+        this.review = review;
     }
 }

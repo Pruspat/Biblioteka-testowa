@@ -77,4 +77,29 @@ public class BookController {
 
         return HttpStatus.OK;
     }
+
+    @RequestMapping(value = "/by-category/{category}",method = RequestMethod.GET)
+    public List<BookContentHolder> getBooksByCategory(@PathVariable String category){
+
+
+        List<BookContentHolder> bookWithAuthorList = new ArrayList<>();
+        List<BookEntity> listOfBooks = bookRepository.findAllByType(category);
+        List<AuthBookEntity> authBookEntitiesList;
+        List<AuthorEntity> bookAuthors = new ArrayList<>();
+
+        for (BookEntity book: listOfBooks) {
+
+            authBookEntitiesList = authBookRepository.findAllByBookId(book.getId());
+
+            for (AuthBookEntity authBookEntity : authBookEntitiesList) {
+                bookAuthors.add(authorRepository.findById(authBookEntity.getAuthorId()));
+            }
+
+            BookContentHolder bookContentHolder = new BookContentHolder(book, bookAuthors);
+            bookWithAuthorList.add(bookContentHolder);
+        }
+
+        return bookWithAuthorList;
+    }
+
 }
