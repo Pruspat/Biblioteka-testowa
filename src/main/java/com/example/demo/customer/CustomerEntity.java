@@ -1,6 +1,8 @@
 package com.example.demo.customer;
 
 
+import org.hibernate.annotations.ColumnDefault;
+
 import javax.persistence.*;
 
 @Entity
@@ -20,6 +22,9 @@ public class CustomerEntity {
     private String homeNr;
     private String postalCode;
     private String role;
+    private Float salary;
+    @Column(columnDefinition="boolean default false")
+    private boolean isPublic = false;
 
     public Integer getId() {
         return id;
@@ -115,5 +120,21 @@ public class CustomerEntity {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Float getSalary() {
+        return salary;
+    }
+
+    public void setSalary(Float salary) {
+        this.salary = salary;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 }

@@ -89,7 +89,7 @@ public class BorrowController {
         List<AuthBookEntity> authBookEntitiesList;
         List<AuthorEntity> bookAuthors = new ArrayList<>();
 
-        try{
+        try {
             List<BorrowEntity> borrows = borrowRepository.findAllByCustomerId(customerRepository.findByEmail(currentUser).getId());
 
             for (BorrowEntity borrow : borrows) {
@@ -102,10 +102,13 @@ public class BorrowController {
 
                 borrowList.add(new Borrow(
                         bookAuthors,
+                        borrow.getId(),
                         bookRepository.findById(borrow.getBookId()).getTitle(),
                         borrow.getDateOfBorrow(),
                         borrow.getDateOfReturn(),
-                        borrow.getStatus())
+                        borrow.getStatus(),
+                        borrow.getMark(),
+                        borrow.getReview())
                 );
 
 
@@ -123,6 +126,7 @@ public class BorrowController {
 
         List<CustomerBorrowEntity> customerBorrowEntities = customerBorrowRepository.findAllByCustomerId(customerId);
 
+
         for (CustomerBorrowEntity customerBorrowEntity : customerBorrowEntities) {
 
             borrowRepository.changeAsReturned(customerBorrowEntity.getBorrowId(), "oddano", new Timestamp(System.currentTimeMillis()));
@@ -139,12 +143,12 @@ public class BorrowController {
 
         BorrowEntity borrowEntity = borrowRepository.findById(borrow.getId());
 
-       if(borrowEntity.getStatus().equals("oddano") && borrowEntity.getMark() == null && borrow.getMark() <= 5 && 0 < borrow.getMark()){
-           borrowRepository.setMark(borrow.getId(),borrow.getMark());
-           return true;
-       }else {
-           return false;
-       }
+        if (borrowEntity.getStatus().equals("oddano") && borrowEntity.getMark() == null && borrow.getMark() <= 5 && 0 < borrow.getMark()) {
+            borrowRepository.setMark(borrow.getId(), borrow.getMark());
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @RequestMapping(value = "/review", method = RequestMethod.POST)
@@ -152,10 +156,10 @@ public class BorrowController {
 
         BorrowEntity borrowEntity = borrowRepository.findById(borrow.getId());
 
-        if(borrowEntity.getStatus().equals("oddano") && borrowEntity.getReview() == null){
-            borrowRepository.setReview(borrow.getId(),borrow.getReview());
+        if (borrowEntity.getStatus().equals("oddano") && borrowEntity.getReview().equals("")) {
+            borrowRepository.setReview(borrow.getId(), borrow.getReview());
             return true;
-        }else {
+        } else {
             return false;
         }
     }
@@ -168,10 +172,24 @@ public class BorrowController {
         Double counter = 0.0;
 
         for (BorrowEntity borrowEntity : borrowEntityList) {
-           sum += borrowEntity.getMark();
-           counter++;
+            if(borrowEntity.getMark() != null){
+                sum += borrowEntity.getMark();
+                counter++;
+            }
         }
 
-      return sum/counter;
+        return sum / counter;
+    }
+
+    @RequestMapping(value = "/get-review/{bookId}", method = RequestMethod.GET)
+    public List<String> getReview(@PathVariable Integer bookId) {
+        List<BorrowEntity> borrowEntityList = borrowRepository.findAllByBookId(bookId);
+
+        List<String> reviews = new ArrayList<>();
+        for (BorrowEntity borrowEntity : borrowEntityList) {
+            reviews.add(borrowEntity.getReview());
+        }
+
+        return reviews;
     }
 }

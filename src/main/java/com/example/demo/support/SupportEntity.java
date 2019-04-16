@@ -13,6 +13,8 @@ public class SupportEntity {
     private String content;
     private String replay;
     private boolean status;
+    private Integer workerId;
+
 
     public SupportEntity() {
     }
@@ -23,6 +25,17 @@ public class SupportEntity {
         this.status = status;
         this.replay = replay;
     }
+
+
+    public SupportEntity(Integer customerId, String content, String replay, boolean status, Integer workerId) {
+        this.customerId = customerId;
+        this.content = content;
+        this.replay = replay;
+        this.status = status;
+        this.workerId = workerId;
+    }
+
+
 
     public Integer getCustomerId() {
         return customerId;
@@ -62,5 +75,13 @@ public class SupportEntity {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getWorkerId() {
+        return workerId;
+    }
+
+    public void setWorkerId(Integer workerId) {
+        this.workerId = workerId;
     }
 }

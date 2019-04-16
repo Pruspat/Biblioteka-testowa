@@ -47,6 +47,17 @@ public class Borrow {
         this.review = review;
     }
 
+    public Borrow(List<AuthorEntity> authors,Integer id, String title, Date dateOfBorrow, Date dateOfReturn, String status, Integer mark, String review) {
+        this.id = id;
+        this.authors = authors;
+        this.title = title;
+        this.dateOfBorrow = dateOfBorrow;
+        this.dateOfReturn = dateOfReturn;
+        this.status = status;
+        this.mark = mark;
+        this.review = review;
+    }
+
     public Integer getId() {
         return id;
     }

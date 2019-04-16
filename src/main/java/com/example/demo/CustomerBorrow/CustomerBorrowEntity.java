@@ -14,6 +14,13 @@ public class CustomerBorrowEntity {
     private Integer customerId;
     private Integer borrowId;
 
+    public CustomerBorrowEntity() {
+    }
+
+    public CustomerBorrowEntity(Integer customerId, Integer borrowId) {
+        this.customerId = customerId;
+        this.borrowId = borrowId;
+    }
 
     public Integer getId() {
         return id;

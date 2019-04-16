@@ -23,4 +23,17 @@ public interface SupportRepository extends JpaRepository<SupportEntity,Long> {
     @Query("UPDATE SupportEntity SET replay = ?2, status = true WHERE id = ?1")
     int setReplay(Integer id, String replay);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE SupportEntity SET workerId = ?1 WHERE id = ?2")
+    int setWorker(Integer workerId, Integer id);
+
+
+    @Modifying
+    @Transactional
+    @Query("Update SupportEntity SET workerId = ?2 WHERE content = ?1")
+    int getTask(String content, Integer id);
+
+    List<SupportEntity> findAllByWorkerId(Integer workerId);
+
 }

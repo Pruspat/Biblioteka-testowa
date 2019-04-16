@@ -27,6 +27,11 @@ public class BookEntity {
         this.isBorrowed = isBorrowed;
     }
 
+    public BookEntity(String title, String type) {
+        this.title = title;
+        this.type = type;
+    }
+
     public Integer getId() {
         return id;
     }

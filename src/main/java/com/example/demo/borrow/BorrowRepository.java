@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface BorrowRepository  extends JpaRepository<BorrowEntity,Long> {
+
     List<BorrowEntity> findAllByCustomerId(Integer cutomerId);
 
     @Modifying
@@ -26,6 +27,7 @@ public interface BorrowRepository  extends JpaRepository<BorrowEntity,Long> {
     @Transactional
     @Query("UPDATE BorrowEntity SET review = ?2 WHERE id = ?1")
     int setReview(Integer id, String review);
+
 
 
 
