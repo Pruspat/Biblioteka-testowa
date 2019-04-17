@@ -6,6 +6,7 @@ public class Book {
     private String type;
     private Long isbnNr;
     private Boolean isBorrowed;
+    private String img;
 
     public Book(String title, String type, Long isbnNr,Boolean isBorrowed) {
         this.title = title;
@@ -13,6 +14,14 @@ public class Book {
         this.isbnNr = isbnNr;
         this.isBorrowed = isBorrowed;
 
+    }
+
+    public Book(String title, String type, Long isbnNr, Boolean isBorrowed, String img) {
+        this.title = title;
+        this.type = type;
+        this.isbnNr = isbnNr;
+        this.isBorrowed = isBorrowed;
+        this.img = img;
     }
 
     public String getTitle() {
@@ -46,5 +55,13 @@ public class Book {
 
     public void setBorrowed(Boolean borrowed) {
         isBorrowed = borrowed;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 }

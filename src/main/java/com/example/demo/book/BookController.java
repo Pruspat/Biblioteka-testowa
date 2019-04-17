@@ -51,19 +51,13 @@ public class BookController {
 
         List<BookContentHolder> bookWithAuthorList = new ArrayList<>();
         List<BookEntity> listOfBooks = bookRepository.findAll();
-        List<AuthBookEntity> authBookEntitiesList = new ArrayList<>();
-        List<AuthorEntity> bookAuthors = new ArrayList<>();
         for (BookEntity book: listOfBooks) {
+            List<AuthorEntity> bookAuthors = new ArrayList<>();
 
-            authBookEntitiesList = authBookRepository.findAllByBookId(book.getId());
-
-            for (AuthBookEntity authBookEntity : authBookEntitiesList) {
-                bookAuthors.add(authorRepository.findById(authBookEntity.getAuthorId()));
-            }
+            bookAuthors.add(authorRepository.findById(authBookRepository.findByBookId(book.getId()).getAuthorId()));
 
             BookContentHolder bookContentHolder = new BookContentHolder(book, bookAuthors);
             bookWithAuthorList.add(bookContentHolder);
-//            bookAuthors.clear();
         }
 
         return bookWithAuthorList;

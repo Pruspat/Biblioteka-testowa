@@ -64,6 +64,7 @@ public class BorrowController {
                 borrowEntity.setBookId(id);
                 borrowEntity.setDateOfBorrow(date);
                 borrowEntity.setStatus("Nie oddano");
+                borrowEntity.setReview("");
                 borrowEntityList.add(borrowRepository.save(borrowEntity));
 
                 //set is_borrowed equals false in bookEntity
@@ -124,16 +125,10 @@ public class BorrowController {
     @RequestMapping(value = "/return/{customerId}", method = RequestMethod.GET)
     public HttpStatus returnBorrow(@PathVariable Integer customerId) {
 
-        List<CustomerBorrowEntity> customerBorrowEntities = customerBorrowRepository.findAllByCustomerId(customerId);
-
-
-        for (CustomerBorrowEntity customerBorrowEntity : customerBorrowEntities) {
-
-            borrowRepository.changeAsReturned(customerBorrowEntity.getBorrowId(), "oddano", new Timestamp(System.currentTimeMillis()));
-            BookEntity book = bookRepository.findById(borrowRepository.findById(customerBorrowEntity.getBorrowId()).getBookId());
+            borrowRepository.changeAsReturned(customerId, "oddano", new Timestamp(System.currentTimeMillis()));
+            BookEntity book = bookRepository.findById(borrowRepository.findById(customerId).getBookId());
             book.setBorrowed(false);
             bookRepository.save(book);
-        }
 
         return HttpStatus.OK;
     }

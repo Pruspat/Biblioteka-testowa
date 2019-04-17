@@ -8,4 +8,6 @@ public interface AuthBookRepository extends JpaRepository<AuthBookEntity, Long> 
 
     AuthBookEntity removeByBookId(Integer bookId);
     List<AuthBookEntity> findAllByBookId(Integer id);
+
+    AuthBookEntity findByBookId(Integer id);
 }

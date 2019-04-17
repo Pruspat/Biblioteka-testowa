@@ -15,6 +15,7 @@ public class BookEntity {
     private Long isbnNr;
     private Integer workerId;
     private Boolean isBorrowed;
+    private String img;
 
     public BookEntity() {
     }
@@ -25,6 +26,15 @@ public class BookEntity {
         this.isbnNr = isbnNr;
         this.workerId = workerId;
         this.isBorrowed = isBorrowed;
+    }
+
+    public BookEntity(String title, String type, Long isbnNr, Integer workerId, Boolean isBorrowed, String img) {
+        this.title = title;
+        this.type = type;
+        this.isbnNr = isbnNr;
+        this.workerId = workerId;
+        this.isBorrowed = isBorrowed;
+        this.img = img;
     }
 
     public BookEntity(String title, String type) {
@@ -78,5 +88,13 @@ public class BookEntity {
 
     public void setBorrowed(Boolean borrowed) {
         isBorrowed = borrowed;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 }
